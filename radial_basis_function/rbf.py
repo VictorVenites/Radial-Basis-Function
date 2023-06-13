@@ -6,7 +6,7 @@ Original Author: Victor Venites
 
 import numpy as np
 import pandas as pd
-from pseudo_inversa import PseudoInversa
+from .pseudo_inversa import PseudoInversa
 
 
 class RadialBasisFunction:
