@@ -4,9 +4,12 @@ Classe e métodos para implementar a Regressão por Radial Basis Function
 Original Author: Victor Venites
 """
 
+# Dependencias internas á Biblioteca
+from .pseudo_inversa import PseudoInversa
+# Dependencias Externas
 import numpy as np
 import pandas as pd
-from .pseudo_inversa import PseudoInversa
+import time
 
 
 class RadialBasisFunction:
@@ -24,13 +27,20 @@ class RadialBasisFunction:
         self.R = None
         self.feature_names_in_ = None
         self.n_feature_in_ = None
+        self.n_linhas_in_ = None
+        self.time = None
         
     # # # Funções Base
     def FuncoesBase(self, t, n_PoloAtual, N_TotalPolos, X, C):
-        Gama = 1 / (2 * self.sigma ** 2)
+        # TODO: revisar as funções, para se aproximarem do original de inspiração
+        Gama = 1 / (2 * self.sigma ** 2) # Por Convensão
         Radial = np.linalg.norm(X - C)
+        #Radial = (np.linalg.norm(X - C)) ** 2 # 
         if self.funcao == "Gaussiana":
             calculo = np.exp(-Gama * (Radial ** 2))
+            #calculo = np.exp(- Gama * Radial)
+        #elif funcao == "Multiquadratica":
+        #    calculo = np.sqrt(Radial + (1 / Gama) ** 2)
         elif self.funcao == "Sigmoide":
             calculo = np.tanh(-Gama * (Radial ** 2))
         elif self.funcao == "Senoidal":
@@ -68,10 +78,15 @@ class RadialBasisFunction:
             num_de_polos = self.Qtd_Polos
         if self.Qtd_Polos > num_de_licoes:
             num_de_polos = num_de_licoes - 2
-        if self.Qtd_Polos > num_de_variaveis * 10:
-            num_de_polos = int(round(self.Qtd_Polos / 2 + 2))
+        if self.Qtd_Polos > num_de_variaveis * 8:
+            # TODO: Avaliar uma bordagem melhor para evitar Overfitting
+            num_de_polos = int(round((self.Qtd_Polos + num_de_variaveis * 8) / 9 + 2))
+        if num_de_polos > num_de_licoes:
+            #num_de_polos = num_de_licoes - 2
+            num_de_polos = num_de_licoes
 
-        # Gerando os Polos(Ex: Centróides do K-means)
+        # Gerando os Polos Aleatórios
+        # TODO: Centróides do K-means, ou gerados por Algoritmo Genéticos)
         C = np.zeros((num_de_polos, num_de_variaveis), dtype = float)
         C = np.random.rand(num_de_polos, num_de_variaveis)
         # Limite por Coluna (apenas entre as escalas de cada coluna)
@@ -79,6 +94,7 @@ class RadialBasisFunction:
         C = pd.DataFrame(C) * Limite + np.array(variaveis.min())
         C = np.array(C)
         
+        # TODO: Criar Função específica para geração dos Polos
         #if self.C is not None:
 
         dist_entre_os_polos = np.zeros((num_de_polos, num_de_polos))
@@ -114,12 +130,16 @@ class RadialBasisFunction:
         try:
             self.feature_names_in_ = X.columns
             self.n_feature_in_ = X.shape[1]
+            self.n_linhas_in_ = X.shape[0]
         except:
             self.n_feature_in_ = len(X[0])
+            self.n_linhas_in_ = len(X)
+        tempo_Inicial = time.time()
         self.Radial(X)
         Matriz_Pseudo_Inversa = PseudoInversa()
         Matriz_Pseudo_Inversa.fit(np.array(self.R), Matriz_Y)
         self.pesos = Matriz_Pseudo_Inversa.weights
+        self.time = time.time() - tempo_Inicial
 
     def predict(self, X):
         #A = np.dot(variaveis_X, W) # Valores finais da predição
@@ -138,5 +158,6 @@ class RadialBasisFunction:
         return Predicao_Y
 
     def score(self, x, y):
+        # TODO: adicionar métricas do próprio Sklearn
         pass
     
