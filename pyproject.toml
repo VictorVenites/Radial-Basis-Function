@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "radial-basis-function"
-version = "0.2.0"
+version = "0.3.0"
 description = "Radial Basis Function e Multiplicação de Matriz Pseudo-Inversa, para modelos de Regressão e Multi-Classificatórios."
 authors = ["Victor Venites <contato@victorvenites.com>"]
 maintainers = ["Victor Venites <contato@victorvenites.com>"]

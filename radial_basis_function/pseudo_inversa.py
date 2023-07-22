@@ -13,12 +13,18 @@ class PseudoInversa:
     Original Author: Victor Venites
     """
     def __init__(self, bias = 1):
-        self.weights = None
         self.bias = bias
+        self.weights = None
         self.feature_names_in_ = None
         self.n_feature_in_ = None
         self.n_linhas_in_ = None
         self.time = None
+    
+    def bias_increment(self, dados):
+        if self.bias != 0:
+            if self.n_linhas_in_ > self.n_feature_in_:
+                dados["Bias_Vies_Intercept"] = self.bias
+        return dados
 
     def fit(self, X, y):
         try:
@@ -29,8 +35,7 @@ class PseudoInversa:
             self.n_feature_in_ = len(X[0])
             self.n_linhas_in_ = len(X)
         Matriz_X = pd.DataFrame(X)
-        if self.bias != 0:
-            Matriz_X["Bias_Vies_Intercept"] = self.bias
+        Matriz_X = self.bias_increment(Matriz_X)
         tempo_Inicial = time.time()
         # Base_T * Base
         Matriz_Quadrada = np.dot(Matriz_X.T, Matriz_X)
@@ -49,8 +54,7 @@ class PseudoInversa:
 
     def predict(self, X):
         Matriz_X = pd.DataFrame(X)
-        if self.bias != 0:
-            Matriz_X["Bias_Vies_Intercept"] = self.bias
+        Matriz_X = self.bias_increment(Matriz_X)
         return np.dot(Matriz_X, self.weights)
 
     def score(self, x, y):
