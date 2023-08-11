@@ -2,7 +2,12 @@
 Radial Basis Function
 Original Author: Victor Venites
 """
-from .pseudo_inversa import *
-from .rbf import *
+from .pseudo_inversa import PseudoInversa
+from .rbf import RadialBasisFunction
 
-__version__ = '0.3.0'
+__version__ = '0.4.0'
+
+__all__ = [
+    'PseudoInversa',
+    'RadialBasisFunction',
+]
