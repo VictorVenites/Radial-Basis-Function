@@ -89,8 +89,8 @@ class RadialBasisFunction:
         if self.funcao == "Gaussiana":
             calculo = np.exp(-Gama * (Radial ** 2))
             #calculo = np.exp(- Gama * Radial)
-        #elif funcao == "Multiquadratica":
-        #    calculo = np.sqrt(Radial + (1 / Gama) ** 2)
+        elif self.funcao == "Multiquadratica":
+            calculo = np.sqrt(Radial + (1 / Gama) ** 2)
         elif self.funcao == "Sigmoide":
             calculo = np.tanh(-Gama * (Radial ** 2))
         elif self.funcao == "Senoidal":
@@ -112,7 +112,8 @@ class RadialBasisFunction:
             # acurado -> 0.5*x*(tanh[((2/pi)**(1/2))*(x + 0.044715*(x**(3)))])
             # rapido -> x*sigma*(1.702*x)
             x = Gama * Radial
-            calculo = 0.5*x*(np.tanh[((2/np.pi)**(1/2))*(x + 0.044715*(x**(3)))])
+            #calculo = 0.5*x*(np.tanh[((2/np.pi)**(1/2))*(x + 0.044715*(x**(3)))])
+            calculo = 0.5*x*(np.tanh(((2/np.pi)**(1/2))*(x + 0.044715*(x**(3)))))
         elif self.funcao == "Fractal":
             # Seed Function 1 /((x**2 + y**2 + 1)**(1/2))
             calculo = 1 / ((Radial**2 + Gama**2 + 1) ** (1/2))
